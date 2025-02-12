@@ -1,16 +1,16 @@
 
 .custom-navbar {
     background: linear-gradient(to right, black, #3b0000);
-    padding: 15px 0; /* Tăng padding cho navbar */
+    padding: 15px 0;
 }
 
-/* Tăng kích thước và khoảng cách menu items */
+
 .nav-link {
     padding: 12px 20px;
     font-size: 15px;
 }
 
-/* Điều chỉnh dropdown menu */
+
 .dropdown-menu {
     min-width: 220px;
     padding: 10px 0;
@@ -22,7 +22,7 @@
 }
 
 
-/* Thanh tìm kiếm */
+
 .search-container {
     background: linear-gradient(to right, black, #3b0000);
     padding: 20px 0;
@@ -36,7 +36,7 @@
     margin: 0 auto;
 }
 
-/* Dropdown Thành Phố */
+
 .search-dropdown {
     min-width: 180px;
     background: white;
@@ -50,7 +50,7 @@
     white-space: nowrap;
 }
 
-/* Ô nhập từ khóa */
+
 .search-input {
     flex: 1;
     height: 42px;
@@ -61,7 +61,7 @@
     outline: none;
 }
 
-/* Nút tìm kiếm */
+
 .search-btn {
     min-width: 120px;
     height: 42px;
@@ -83,7 +83,7 @@
     background: #cc0000;
 }
 
-/* Icon trong dropdown và button */
+
 .search-dropdown i,
 .search-btn i {
     font-size: 14px;
@@ -103,4 +103,3 @@
     }
 }
 
-/* Rest of your CSS remains unchanged */
