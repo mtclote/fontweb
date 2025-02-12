@@ -89,17 +89,4 @@
     font-size: 14px;
 }
 
-/* Đảm bảo responsive */
-@media (max-width: 768px) {
-    .search-bar {
-        flex-direction: column;
-        padding: 0 15px;
-    }
-    
-    .search-dropdown,
-    .search-input,
-    .search-btn {
-        width: 100%;
-    }
-}
 
