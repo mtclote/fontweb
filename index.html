@@ -14,6 +14,9 @@
 
 
     <link rel="stylesheet" href="styles.css">
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
 </head>
 
 <body>
@@ -154,199 +157,206 @@
 
         <div class="body-content">
             <div class="row">
-                <div class="col-md-5">
-                    <div class="job-list">
-                        <div class="card job-card">
-                            <div class="card-body position-relative p-3">
-                                <div class="time-and-badge d-flex justify-content-between align-items-center">
-                                    <p class="text-muted small mb-0">Posted 17 minutes ago</p>
-                                    <span class="hot-badge">HOT</span>
-                                </div>
-                                <h6 class="job-title"> <strong>Automation Tester (QA QC)</strong></h6>
-
-
-                                <div class="align-items-center">
-
-                                    <span class="company-name">OnePay</span>
-                                </div>
-
-
-                                <p class="salary">
-                                    <i class="fa-solid fa-dollar-sign"></i>
-                                    <a href="#">Sign in to view salary</a>
-                                </p>
-
-                                <hr class="dot-hr">
-                                <p class="job-location">
-                                    <i class="fa-solid fa-building"></i> At office <br>
-                                    <i class="fa-solid fa-location-dot"></i> Hồ Chí Minh
-                                </p>
-
-
-                                <div class="job-tags">
-                                    <span class="badge-tag text-dark">Automation test</span>
-                                    <span class="badge-tag text-dark">Tester</span>
-                                    <span class="badge-tag text-dark">QA QC</span>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
+                <div id="job-list-container" class="col-md-4"></div>
+                <div id="job-detail-container" class="col-md-8">
+                    <div id="job-detail-content"></div>
                 </div>
-                <div class="col-md-7">
-                    <div class="card card-content">
-                        <div class="card-body">
-                            <div class="job-header">
+                
+                <script>
+                    
+                    const API_URL = "https://67b5e25507ba6e59083ee9e4.mockapi.io/api/test/test";
 
-                                <div class="job-info">
-                                    <h3 class="job-title">
-                                        Automation Tester (QA QC)
-                                        <a href="#" class="external-link"><i
-                                                class="fa-solid fa-up-right-from-square"></i></a>
-                                    </h3>
-                                    <p class="company-name">OnePay</p>
+                    async function fetchJobs() {
+                        try {
+                            const response = await fetch(API_URL);
+                            if (!response.ok) {
+                                throw new Error("Lỗi khi lấy dữ liệu từ API");
+                            }
+                            const jobs = await response.json();
+                            if (jobs.length > 0) {
+                                displayJobs(jobs);
+                                showJobDetails(jobs[0].id);
+                            }
+                            //displayJobscol(jobs);
+                        } catch (error) {
+                            console.error("Lỗi:", error);
+                            document.getElementById("job-list-container").innerHTML = "<p class='text-danger'>Không thể tải danh sách việc làm.</p>";
+                        }
+                    }
 
-                                    <p class="salary"><i class="fa-solid fa-dollar-sign"></i> <a href="#">Sign in to
-                                            view salary</a></p>
+                    function displayJobs(jobs) {
+                        let jobContainer = document.getElementById("job-list-container");
+
+                        if (!jobContainer) {
+                            console.error("Không tìm thấy phần tử chứa danh sách công việc!");
+                            return;
+                        }
+
+                        if (!Array.isArray(jobs)) {
+                            console.error("Dữ liệu jobs không hợp lệ:", jobs);
+                            return;
+                        }
+
+                        jobContainer.innerHTML = "";
+
+                        jobs.forEach(job => {
+                            let jobElement = document.createElement("div");
+                            jobElement.classList.add("col");
+
+                            jobElement.innerHTML = `
+                                    <div class="job-list" onclick="showJobDetails(${job.id})">
+                                        <div class="card job-card">
+                                            <div class="card-body position-relative p-3">
+                                                <div class="time-and-badge d-flex justify-content-between align-items-center">
+                                                    <p class="text-muted small mb-0">Posted ${job.postedTime || "Không rõ"}</p>
+                                                    
+                                                    ${job.isHot ? '<span class="hot-badge" >HOT</span>' : ''}
+                                                </div>
+                                                <h6 class="job-title"><strong>${job.title || "Không có tiêu đề"}</strong></h6>
+
+                                                <div class="align-items-center">
+                                                    <span class="company-name">${job.company || "Không rõ công ty"}</span>
+                                                </div>
+
+                                                <p class="salary">
+                                                    <i class="fa-solid fa-dollar-sign"></i>
+                                                    <a href="#">${job.salary ? job.salary : "Sign in to view salary"}</a>
+                                                </p>
+
+                                                <hr class="dot-hr">
+                                                <p class="job-location">
+                                                    <i class="fa-solid fa-building"></i> ${job.workingMode || "Không xác định"} <br>
+                                                    <i class="fa-solid fa-location-dot"></i> ${job.location || "Không rõ địa điểm"}
+                                                </p>
+
+                                                <div class="job-tags">
+                                                    ${job.tags?.map(tag => `<span class="badge-tag text-dark">${tag}</span>`).join("") || ""}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `;
+
+                            
+                            jobContainer.appendChild(jobElement);
+                        });
+                    }
+
+                    async  function showJobDetails(jobId) {
+                        try {
+                            let response = await fetch(`${"https://67b5e25507ba6e59083ee9e4.mockapi.io/api/test/test"}/${jobId}`);
+                            let job = await response.json();
+
+                            let detailContent = document.getElementById("job-detail-content");
+                            detailContent.innerHTML = `
+                                    <div class="col">
+                                    <div class="card card-content">
+                                        <div class="card-body">
+                                            <div class="job-header">
+                                                <div class="job-info">
+                                                    <h3 class="job-title">
+                                                        ${job.title}
+                                                        <a href="#" class="external-link"><i class="fa-solid fa-up-right-from-square"></i></a>
+                                                    </h3>
+                                                    <p class="company-name">${job.company}</p>
+                                                    <p class="salary"><i class="fa-solid fa-dollar-sign"></i> ${job.salary ? job.salary : '<a href="#">Sign in to view salary</a>'}</p>
+                                                </div>
+                                            </div>
+                                            <div class="job-footer">
+                                                <button class="apply-btn">Apply now</button>
+                                                <i class="fa-regular fa-heart favorite-icon"></i>
+                                            </div>
+                                            <div class="scrollable-section">
+                                                <p class="job-location">
+                                                    <i class="fa-solid fa-location-dot"></i> ${job.address || "Không có địa chỉ"} <a href="#" class="external-link"><i class="fa-solid fa-up-right-from-square"></i></a><br>
+                                                    <i class="fa-solid fa-building"></i> ${job.workingMode}<br>
+                                                    <i class="fas fa-clock"></i> ${job.postedTime} ago
+                                                </p>
+                                                <div class="skills-job">
+                                                    <div>Skills:</div>
+                                                    <div class="job-tags">
+                                                        ${job.tags.map(tag => `<span class="badge-tag text-dark">${tag}</span>`).join("")}
+                                                    </div>
+                                                </div>
+                                                <hr class="dot-hr">
+                                                <h3 class="title-top-in-content">Top 3 reasons to join us</h3>
+                                                <ul class="custom-list-in-content">
+                                                    <li>Competitive Salary</li>
+                                                    <li>Professional environment and Experienced team</li>
+                                                    <li>Receiving training opportunities</li>
+                                                </ul>
+                                                <hr class="dot-hr">
+                                                <h3 class="title-top-in-content">Job description</h3>
+                                                <ul class="custom-list-in-content">
+                                                    "N/A"
+                                                </ul>
+                                                <hr class="dot-hr">
+                                                <h3 class="title-top-in-content">Your skills and experience</h3>
+                                                <ul class="custom-list-in-content">
+                                                   "N/A"
+                                                </ul>
+                                                <hr class="dot-hr">
+                                                <h3 class="title-top-in-content">Why you'll love working here</h3>
+                                                <ul class="custom-list-in-content">
+                                                    "N/A"
+                                                </ul>
+                                                <hr>
+                                                <div class="company-card">
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <div>
+                                                            <h4 class="company-name">${job.company}</h4>
+                                                            <p class="company-description">"N/A"</p>
+                                                        </div>
+                                                        <a href="#" class="view-company-link">View company <i class="fa-solid fa-up-right-from-square"></i></a>
+                                                    </div>
+                                                    <div class="row mt-3">
+                                                        <div class="col-md-4">
+                                                            <p class="company-label">Company type</p>
+                                                            <p class="company-value">"N/A"</p>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <p class="company-label">Company industry</p>
+                                                            <p class="company-value"> "N/A"</p>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <p class="company-label">Company size</p>
+                                                            <p class="company-value"> "N/A"</p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row mt-3">
+                                                        <div class="col-md-4">
+                                                            <p class="company-label">Country</p>
+                                                            <p class="company-value"><img src="https://st.quantrimang.com/photos/image/2021/09/02/co-viet-nam.png" alt="Vietnam Flag" class="country-flag"> Vietnam</p>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <p class="company-label">Working days</p>
+                                                            <p class="company-value">Monday - Friday</p>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <p class="company-label">Overtime policy</p>
+                                                            <p class="company-value">No OT</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
+                                `;
+                        } catch (error) {
+                            console.error("Lỗi khi tải chi tiết công việc:", error);
+                        }
+                    }
 
 
-                            <div class="job-footer">
-                                <button class="apply-btn">Apply now</button>
-                                <i class="fa-regular fa-heart favorite-icon"></i>
-                            </div>
-                            <div class="scrollable-section">
 
-                                <p class="job-location">
-                                    <i class="fa-solid fa-location-dot"></i>BIDV Tower, 194 Tran Quang Khai, Hoan Kiem,
-                                    Ha Noi <a href="#" class="external-link"><i
-                                            class="fa-solid fa-up-right-from-square"></i></a><br>
-                                    <i class="fa-solid fa-building"></i> At office<br>
-                                    <i class="fas fa-clock"></i> 4 minutes ago
-                                </p>
 
-                                <div class="skills-job">
-                                    <div>
-                                        Skills:
-                                    </div>
 
-                                    <div class="job-tags">
-                                        <span class="badge-tag text-dark">Automation test</span>
-                                        <span class="badge-tag text-dark">Tester</span>
-                                        <span class="badge-tag text-dark">QA QC</span>
-                                    </div>
-                                </div>
+                    document.addEventListener("DOMContentLoaded", fetchJobs);
 
-                                <hr class="dot-hr">
+                </script>
 
-                                <h3 class="title-top-in-content">
-                                    Top 3 reasons to join us
-                                </h3>
 
-                                <ul class="custom-list-in-content">
-                                    <li>Competitive Salary</li>
-                                    <li>Professional environment and Experienced team</li>
-                                    <li>Receiving training opportunities</li>
-                                </ul>
-
-                                <hr class="dot-hr">
-
-                                <h3 class="title-top-in-content">
-                                    Job description
-                                </h3>
-
-                                <ul class="custom-list-in-content">
-                                    <li>Designs, tests, and implements security measures to protect applications and
-                                        data.</li>
-                                    <li>To execute tests and do the test reports.</li>
-                                    <li>To create/ update test Design specification basing on the requirements </li>
-                                    <li>To perform bug reporting using an automated bug tracking system</li>
-                                    <li>Provide detailed report for Supervisor.</li>
-                                    <li>Create plans, perform manual and automation tests for mobile applications,
-                                        Website, Server.</li>
-                                </ul>
-
-                                <hr class="dot-hr">
-
-                                <h3 class="title-top-in-content">Your skills and experience</h3>
-                                <ul class="custom-list-in-content">
-                                    <li>Minimum of 2+ year proven testing experience.</li>
-                                    <li>Minium of 1+ year experience in automation testing (robot framework is prefer)
-                                    </li>
-                                    <li>Ability to co-ordinate, communicate with customers, team on projects.</li>
-                                    <li>Having experience with testing tool: Postman, JMeter (or same tool).</li>
-                                    <li>Having Knowledge about webservice.</li>
-                                    <li>Having experiences in automated testing and usability testing.</li>
-                                    <li>Having ISTQB certificate is a big plus.</li>
-                                    <li>Speaking, Writing and Reading English is preferred.</li>
-                                    <li>Strong interpersonal, analytical, and problem-solving skills, have long-term
-                                        thinking.</li>
-                                    <li>Having Knowledge about webservice.</li>
-                                </ul>
-                                <hr class="dot-hr">
-
-                                <h3 class="title-top-in-content">
-                                    Why you'll love working here
-                                </h3>
-
-                                <ul class="custom-list-in-content">
-                                    <li>Working in a professional environment and experienced team.</li>
-                                    <li> Receiving training opportunities including many technical seminars and soft
-                                        skill training courses.</li>
-                                    <li> Competitive salary</li>
-                                    <li> Applicable for all normal benefits: insurances, bonus, annual outing trip, team
-                                        building activities.</li>
-                                </ul>
-                                <hr>
-
-                                <!-- Footer trong content -->
-                                <div class="company-card">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <h4 class="company-name">OnePay</h4>
-                                            <p class="company-description">OnePay JSC</p>
-                                        </div>
-                                        <a href="#" class="view-company-link">View company <i
-                                                class="fa-solid fa-up-right-from-square"></i></a>
-                                    </div>
-
-                                    <div class="row mt-3">
-                                        <div class="col-md-4">
-                                            <p class="company-label">Company type</p>
-                                            <p class="company-value">IT Product</p>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <p class="company-label">Company industry</p>
-                                            <p class="company-value">Financial Services</p>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <p class="company-label">Company size</p>
-                                            <p class="company-value">51-150</p>
-                                        </div>
-                                    </div>
-
-                                    <div class="row mt-3">
-                                        <div class="col-md-4">
-                                            <p class="company-label">Country</p>
-                                            <p class="company-value"><img
-                                                    src="https://st.quantrimang.com/photos/image/2021/09/02/co-viet-nam.png"
-                                                    alt="Australia Flag" class="country-flag"> Vietnam</p>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <p class="company-label">Working days</p>
-                                            <p class="company-value">Monday - Friday</p>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <p class="company-label">Overtime policy</p>
-                                            <p class="company-value">No OT</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
 
             <div class="footer-background">
