@@ -145,10 +145,57 @@
 
         <div class="filter-bar">
             <div class="filters">
-                <button class="btn filter-btn">Level <i class="fa-solid fa-chevron-down"></i></button>
-                <button class="btn filter-btn">Working Model <i class="fa-solid fa-chevron-down"></i></button>
-                <button class="btn filter-btn">Salary <i class="fa-solid fa-chevron-down"></i></button>
-                <button class="btn filter-btn">Industry<i class="fa-solid fa-chevron-down"></i></button>
+                <div class="d-flex">
+                    <div class="dropdown me-2">
+                        <button class="btn btn-light dropdown-toggle2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Level<i class="fa-solid fa-chevron-down"></i>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><input type="checkbox" id="fresher"> <label for="fresher"> Fresher</label></li>
+                            <li><input type="checkbox" id="junior"> <label for="junior"> Junior</label></li>
+                            <li><input type="checkbox" id="senior"> <label for="senior"> Senior</label></li>
+                            <li><input type="checkbox" id="manager"> <label for="manager"> Manager</label></li>
+                        </ul>
+                    </div>
+                    <div class="dropdown me-2">
+                        <button class="btn btn-light dropdown-toggle2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Working Model<i class="fa-solid fa-chevron-down"></i>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><input type="checkbox" id="onsite"> <label for="onsite"> At office</label></li>
+                            <li><input type="checkbox" id="remote"> <label for="remote"> Remote</label></li>
+                            
+                            <li><input type="checkbox" id="hybrid"> <label for="hybrid"> Hybrid</label></li>
+                        </ul>
+                    </div>
+                    <div class="dropdown me-2">
+                        <button class="btn btn-light dropdown-toggle2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Salary<i class="fa-solid fa-chevron-down"></i>
+                        </button>
+                        <div class="dropdown-menu">
+                            <label>500$ - 10,000$</label>
+                            <input type="range" class="form-range range-slider" min="500" max="10000" step="100">
+                            <div class="apply-btn">Apply</div>
+                        </div>
+                    </div>
+                </div>
+                
+                
+                <div class="dropdown me-2">
+                    <button class="btn btn-light dropdown-toggle2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Industry<i class="fa-solid fa-chevron-down"></i>
+                    </button>
+                    <div class="dropdown-menu">
+                        <input type="text" class="search-box" placeholder="Search industry">
+                        <ul class="list-unstyled">
+                            <li><input type="checkbox" id="consumer"> <label for="consumer"> Consumer Goods</label></li>
+                            <li><input type="checkbox" id="ecommerce"> <label for="ecommerce"> E-commerce</label></li>
+                            <li><input type="checkbox" id="education"> <label for="education"> Education and Training</label></li>
+                            <li><input type="checkbox" id="banking"> <label for="banking"> Banking</label></li>
+                            <li><input type="checkbox" id="food"> <label for="food"> Food & Beverage</label></li>
+                        </ul>
+                    </div>
+                </div>
             </div>
             <button class="btn btn-light filter-control">
                 <i class="fa-solid fa-filter"></i> Filter
@@ -157,13 +204,15 @@
 
         <div class="body-content">
             <div class="row">
-                <div id="job-list-container" class="col-md-4"></div>
-                <div id="job-detail-container" class="col-md-8">
+                <div class="scrollable">
+                    <div id="job-list-container" class="col-md-5"></div>
+                
+                <div id="job-detail-container" class="col-md-7">
                     <div id="job-detail-content"></div>
                 </div>
-                
+            </div>
                 <script>
-                    
+
                     const API_URL = "https://67b5e25507ba6e59083ee9e4.mockapi.io/api/test/test";
 
                     async function fetchJobs() {
@@ -237,12 +286,12 @@
                                     </div>
                                 `;
 
-                            
+
                             jobContainer.appendChild(jobElement);
                         });
                     }
 
-                    async  function showJobDetails(jobId) {
+                    async function showJobDetails(jobId) {
                         try {
                             let response = await fetch(`${"https://67b5e25507ba6e59083ee9e4.mockapi.io/api/test/test"}/${jobId}`);
                             let job = await response.json();
